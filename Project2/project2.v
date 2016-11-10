@@ -41,15 +41,9 @@ Module Id.
   
 End Id.
 
-Module Expression. 
-  
-  
-
-End Expression.
 
 (** Natural numbers can be understood as identifiers *)
 Coercion Id.Id: nat >-> Id.t.
-
 
 (** In the module [State], [t A] is the type of a state, i.e.  a
     partial mapping from identifiers to values of type [A]. *)
@@ -64,8 +58,4 @@ Module State.
           else s y.
 End State.
 
-Module Stack. 
-  
 
-
-End Stack.
