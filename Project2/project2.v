@@ -58,4 +58,61 @@ Module State.
           else s y.
 End State.
 
+(** * Semantics as Relations *)
+
+(** ** Syntax *)
+
+
+Inductive inst: Type := 
+| SEQ : inst -> inst -> inst
+| PUSH-n : inst -> inst
+| ADD : Z -> Z -> inst -> inst
+| MULT : Z -> Z -> inst -> inst
+| SUB : Z -> Z -> inst -> inst
+| TRUE : inst -> inst
+| FALSE : inst -> inst
+| EQ : Z -> Z -> inst -> inst
+| LE  : Z -> Z -> inst -> inst
+| AND : bool -> bool -> inst -> inst
+| NEG : bool -> inst -> inst
+| FETCH-x : inst -> inst
+| STORE-x : Z -> inst -> inst
+| NOOP : inst
+| BRANCH : bool -> inst -> inst
+| LOOP : inst -> inst.
+
+(** ** Structural Operational Semantics *)
+
+Inductive configuration : Type :=
+| Rem : inst -> State.t -> configuration
+| Fin : State.t -> configuration.
+
+Inductive am : inst -> State.t -> State.t -> Prop := 
+| am_noop:    (* < Skip, s > -> s *)
+    forall s, am NOOP s (Fin s) 
+| am_seq:
+    forall S1 S2 s S1' s',
+      am S1 s (Rem S1' s') ->
+      am (Seq S1 S2) s (Rem (Seq S1' S2) s')
+| am_seq2:
+    forall S1 S2 s s',
+      am S1 s (Fin s') ->
+      am (Seq S1 S2) s (Rem S2 s')
+| am_push: 
+    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
+      am (am_push x a)
+      s
+      (Fin (State.update s x (Aexp.A a s))) (* Change these to Concat instead of replace *)
+| am_true: 
+    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
+      am (am_true x a)
+      s
+      (Fin (State.update s x (Aexp.A a s)))
+
+| am_false: 
+    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
+      am (am_false x a)
+      s
+      (Fin (State.update s x (Aexp.A a::x s)))
+.
 
