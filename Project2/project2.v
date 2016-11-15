@@ -46,34 +46,13 @@ Inductive configuration : Type :=
 | Fin : State.t -> configuration.
 
 (** ** Structural Operational Semantics *)
-Inductive am : inst -> State.t -> State.t -> Prop := 
+Inductive am : inst -> State.t -> configuration -> Prop := 
 | am_noop:    (* < Skip, s > -> s *)
-    forall s, am NOOP s (Fin s) 
-| am_seq:
-    forall S1 S2 s S1' s',
-      am S1 s (Rem S1' s') ->
-      am (Seq S1 S2) s (Rem (Seq S1' S2) s')
-| am_seq2:
-    forall S1 S2 s s',
-      am S1 s (Fin s') ->
-      am (Seq S1 S2) s (Rem S2 s')
-| am_push: 
-    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
-      am (am_push x a)
-      s
-      (Fin (State.update s x (Aexp.A a s))) (* Change these to Concat instead of replace *)
-| am_true: 
-    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
-      am (am_true x a)
-      s
-      (Fin (State.update s x (Aexp.A a s)))
-
-| am_false: 
-    forall (x:Id.t) (a:Aexp.t) (s:Id.t -> Z),
-      am (am_false x a)
-      s
-      (Fin (State.update s x (Aexp.A a::x s)))
-.
+    forall s, am NOOP s (Fin s)
+| am_fetch: 
+    forall n s, am (State.find n) (Fin s).
+(*| am_push: 
+    forall n, am *)
 
  Module Examples.
 

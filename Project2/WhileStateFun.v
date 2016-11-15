@@ -60,6 +60,15 @@ Module State.
     fun y => if Id.beq y x
           then v
           else s y.
+  Fixpoint find {A:Type}(state:t A)(key:Id.t) : option A :=
+    match state with
+      | [ ] => None
+      | cons (k,v) state' => 
+          if Id.beq key k
+          then Some v
+          else find state' key 
+    end.
+
 End State.
 
 
