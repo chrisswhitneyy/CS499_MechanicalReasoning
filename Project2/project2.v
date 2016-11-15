@@ -5,14 +5,23 @@ Import ListNotations.
 
 
 Module Stack.
-  
-  Definition t := list Type.
 
-  Definition pop  (stack:Stack.t) : list := 
+  Inductive A : Type :=
+  | num | inst | empty.
+
+  Inductive t (X:A) : Type := 
+  | nil  : t X
+  | cons : t X -> t X -> t X.
+
+  Definition pop stack : A := 
     match stack with 
     | a1 :: _ => a1
-    | nil => stack
+    | [ ] => empty
     end.
+  (* Start of the push function *)
+  (* 
+  Definition push stack (v:A) : Type :=
+   v::stack. *)
 
 End Stack.
 
