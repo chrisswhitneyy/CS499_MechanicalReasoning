@@ -4,7 +4,15 @@ Require Import Arith ZArith List String WhileStateFun.
 Import ListNotations. 
 
 
-Module Stack. 
+Module Stack.
+  
+  Definition t := list Type.
+
+  Definition pop  (stack:Stack.t) : list := 
+    match stack with 
+    | a1 :: _ => a1
+    | nil => stack
+    end.
 
 End Stack.
 
