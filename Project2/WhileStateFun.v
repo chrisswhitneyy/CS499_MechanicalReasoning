@@ -54,12 +54,11 @@ Coercion Id.Id: nat >-> Id.t.
 
 Module State.
 
-  Definition t := Id.t -> Z.
+  Definition t (A:Type) : Type := list (Id.t * A).
 
-  Definition update (s:t)(x:Id.t)(v:Z) : t :=
-    fun y => if Id.beq y x
-          then v
-          else s y.
+  Definition update{A:Type}(state:t A)(key:Id.t)(value:A): t A :=
+    (key,value)::state.
+
   Fixpoint find {A:Type}(state:t A)(key:Id.t) : option A :=
     match state with
       | [ ] => None
@@ -68,6 +67,16 @@ Module State.
           then Some v
           else find state' key 
     end.
+
+  Fact find_update :
+    forall (A:Type)(k:Id.t) (v:A) (s: t A),
+      find (update s k v) k = Some v.
+  Proof.
+    intros A k v s.
+    simpl.
+    rewrite Id.beq_refl.
+    reflexivity.
+  Qed.
 
 End State.
 
