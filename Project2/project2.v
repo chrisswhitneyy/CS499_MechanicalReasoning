@@ -69,42 +69,57 @@ Inductive am : config -> config -> Prop :=
 | am_le_tt : 
   forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
     (Z.leb z1 z2) = true -> 
-    am (EQ::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s)
+    am (LE::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s)
 | am_le_ff : 
   forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
     (Z.leb z1 z2) = false -> 
-    am (EQ::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s).
+    am (LE::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s)
 
 (* AND *) 
+| am_and_tt: 
+  forall (c:code) (s:State.t) (e:Stack.t) (t1 t2 tt:bool), 
+    t1 = true -> t2 = true -> 
+    am (AND::c, e, s) (c,(Stack.T tt)::e,s)
 
-
-
-
-| am_fetch: 
-    forall (n:Id.t)  (s:State.t Type) (e:Stack.t), (State.find s n) ::e. 
-
-
-
-
+| am_and_ff: 
+  forall (c:code) (s:State.t) (e:Stack.t) (t1 t2 ff:bool), 
+    t1 = false \/ t2 = false -> 
+    am (AND::c, e, s) (c,(Stack.T ff)::e,s)
+ 
+(*NEG *)
 |am_neg_tt: 
-  forall  (c:inst) (s:State.t) (e:Stack.t), 
-  Stack.pop e = tt ->  ff::e 
+  forall  (c:code) (s:State.t) (e:Stack.t) (t tt:bool), 
+    t = true -> 
+    am (NEG::c,e,s) (c,(Stack.T tt)::e,s)
 
 |am_neg_ff: 
-  forall  (c:inst) (s:State.t) (e:Stack.t), 
-  Stack.pop e = ff -> tt::e 
+  forall  (c:code) (s:State.t) (e:Stack.t) (t ff:bool), 
+    t = false -> 
+    am (NEG::c,e,s) (c,(Stack.T ff)::e,s)
 
-| am_store: 
-    forall (n:Id.t)  (s:State.t) (e:Stack.t), (State.update (State.find s n) s) .
+| am_fetch: 
+    forall (c:code) (s:State.t) (e:Stack.t) (x:Id.t), 
+      am ((FETCH x)::c,e,s) (c, (Stack.z (s x))::e,s)
+
+|am_store:
+    forall (c:code) (s:State.t) (e:Stack.t) (x:Id.t) (z:Z),
+      am ((STORE x)::c,(Stack.z z)::e,s) (c,e, (State.update s x z))
 
 |am_branch_tt: 
-  forall (c1 c2 c: inst) (e: Stack.t) (s:State.t) , 
-    Stack.pop e = tt ->  c1::c 
+    forall (c c1 c2:code) (s:State.t) (e:Stack.t) (t:bool), 
+      t = true ->
+      am ((BRANCH c1 c2)::c, (Stack.T t)::e, s) (c1++c, e, s)
 
 |am_branch_ff: 
-  forall (c1 c2 c: inst) (e: Stack.t) (s:State.t) , 
-    Stack.pop e = ff ->  c2::c 
+    forall (c c1 c2:code) (s:State.t) (e:Stack.t) (t:bool), 
+      t = false ->
+      am ((BRANCH c1 c2)::c, (Stack.T t)::e, s) (c2++c, e, s).
+
+(* LOOP *) 
 |am_loop: 
+    forall (c c1 c2:code) (s:State.t) (e:Stack.t), 
+      am ((LOOP (c1++c2)::c), e, s) ( c1::BRANCH(c2::LOOP(c1,c2),NOOP)::c,e,s).
+
  Module Examples.
 
     Example ex4_1 : t Z :=

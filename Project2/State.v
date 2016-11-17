@@ -50,7 +50,7 @@ Module State.
     fun y => if Id.beq y x
           then v
           else s y.
-  
+
 End State.
 
 (* Evaluation Stack *)
