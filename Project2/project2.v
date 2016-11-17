@@ -1,6 +1,6 @@
 (* Project 2: *)
 
-Require Import Arith ZArith List String State.
+Require Import Arith ZArith List String State Bool.
 Import ListNotations. 
 
 (** ** Syntax *)
@@ -22,6 +22,8 @@ Definition code: Type := list inst.
 (* Configuration has the form <c,e,s> where c is a sequence of inst, 
     e is the stack, and s is the storage*)
 Definition config : Type := ( code * Stack.t * State.t) .
+
+Compute (Z.eqb 2%Z 1%Z).
 
 (** ** Structural Operational Semantics *)
 Inductive am : config -> config -> Prop := 
@@ -52,14 +54,31 @@ Inductive am : config -> config -> Prop :=
 
 | am_false: 
     forall (c:code) (s:State.t) (e:Stack.t) (ff:bool), 
-       am (FALSE::c, e, s) (c, (Stack.T ff)::e, s).
-
-(*
+       am (FALSE::c, e, s) (c, (Stack.T ff)::e, s)
 
 (* EQ and LE *) 
 | am_eq_tt : 
   forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
-    am (EQ::c, e, s) (c, (Stack.T (is_eq z1 z2))::e, s).
+    (Z.eqb z1 z2) = true -> 
+    am (EQ::c,e,s) (c, (Stack.T (Z.eqb z1 z2))::e, s)
+| am_eq_ff : 
+  forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
+    (Z.eqb z1 z2) = false -> 
+    am (EQ::c,e,s) (c, (Stack.T (Z.eqb z1 z2))::e, s)
+
+| am_le_tt : 
+  forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
+    (Z.leb z1 z2) = true -> 
+    am (EQ::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s)
+| am_le_ff : 
+  forall (c:code) (s:State.t) (e:Stack.t) (z1 z2: Z), 
+    (Z.leb z1 z2) = false -> 
+    am (EQ::c,e,s) (c, (Stack.T (Z.leb z1 z2))::e, s).
+
+(* AND *) 
+
+
+
 
 | am_fetch: 
     forall (n:Id.t)  (s:State.t Type) (e:Stack.t), (State.find s n) ::e. 
