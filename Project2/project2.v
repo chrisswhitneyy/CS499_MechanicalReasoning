@@ -23,8 +23,6 @@ Definition code: Type := list inst.
     e is the stack, and s is the storage*)
 Definition config : Type := ( code * Stack.t * State.t) .
 
-Compute (Z.eqb 2%Z 1%Z).
-
 (** ** Structural Operational Semantics *)
 Inductive am : config -> config -> Prop := 
 | am_noop:
