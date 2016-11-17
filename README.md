@@ -1,9 +1,9 @@
 # CS499 Mechanical Reasoning
 All team project code for Fall 2016 mechincal reasoning course. 
 
-Course text: 
-Semantics with Application: 10.1007/978-1-84628-692-6
-Software Fondations: https://www.cis.upenn.edu/~bcpierce/sf/current/index.html
+Course text: </br>
+Semantics with Application: 10.1007/978-1-84628-692-6 </br>
+Software Fondations: https://www.cis.upenn.edu/~bcpierce/sf/current/index.html</br>
 ## Project 1 
 A partial implementation of the formal proof described by Painter and McCarthy using Coq. The goal of McCarthy was to obtain machine-checked proofs of correctness for compilers. This work is not machine-checked but, unlike most pen-and-paper work, it is quite detailed.
 ## Project 2 
