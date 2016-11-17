@@ -116,14 +116,15 @@ Inductive am : config -> config -> Prop :=
       am ((BRANCH c1 c2)::c, (Stack.T t)::e, s) (c2++c, e, s).
 
 (* LOOP *) 
-|am_loop: 
+(* |am_loop: 
     forall (c c1 c2:code) (s:State.t) (e:Stack.t), 
-      am ((LOOP (c1++c2)::c), e, s) ( c1::BRANCH(c2::LOOP(c1,c2),NOOP)::c,e,s).
+      am ((LOOP (c1++c2)++c), e, s) ( c1::BRANCH(c2::LOOP(c1,c2),NOOP)::c,e,s). *) 
 
+(*
  Module Examples.
 
-    Example ex4_1 : t Z :=
-      [ (Id.Id x, 3%Z) ; (PUSH 1) ; FETCH x; ADD ; STORE x ].
+    Example ex_4_1: config :=
+      [ (PUSH 1%Z) (Id.Id 0, 3%Z)  [ ] [ ]      ].
 
 
 
