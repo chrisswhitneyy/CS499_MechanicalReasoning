@@ -41,36 +41,25 @@ Module Id.
   
 End Id.
 
-(** Natural numbers can be understood as identifiers *)
-Coercion Id.Id: nat >-> Id.t.
-
-(** In the module [State], [t A] is the type of a state, i.e.  a
-    partial mapping from identifiers to values of type [A]. *)
-
+(* State *)
 Module State.
 
-  Definition t (A:Type)  : Type := list (Id.t * A).
-
-  Definition update{A:Type}(state:t A)(key:Id.t)(value:A):t A :=
-    (key,value)::state.
-
-  Fixpoint find {A:Type}(state:t A)(key:Id.t) : option A :=
-    match state with
-      | [ ] => None
-      | cons (k,v) state' => 
-          if Id.beq key k
-          then Some v
-          else find state' key 
-    end. 
-
-  Fact find_update :
-    forall (A:Type)(k:Id.t) (v:A) (s:t A),
-      find (update s k v) k = Some v.
-  Proof.
-    intros A k v s.
-    simpl.
-    rewrite Id.beq_refl.
-    reflexivity.
-  Qed.
-
+  Definition t := Id.t -> Z.
+  
+  Definition update (s:t)(x:Id.t)(v:Z) : t :=
+    fun y => if Id.beq y x
+          then v
+          else s y.
+  
 End State.
+
+(* Evaluation Stack *)
+Module Stack.
+
+  Inductive A : Type :=
+  | z : Z -> A 
+  | T: bool -> A.
+
+  Definition t : Type := list A.
+
+End Stack.

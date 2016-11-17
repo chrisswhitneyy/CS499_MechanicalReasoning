@@ -3,33 +3,6 @@
 Require Import Arith ZArith List String State.
 Import ListNotations. 
 
-
-Module Stack.
-
-  Inductive A : Type :=
-  | z : Z -> A 
-  | t: bool -> A.
-
-Inductive t : Type :=
-  | nil : t
-  | cons : A -> t -> t.
-
-Notation "x :: l" := (cons x l)
-                     (at level 60, right associativity).
-Notation "[ ]" := nil.
-Notation "[ x ; .. ; y ]" := (cons x .. (cons y nil) ..).
-
-Definition push (n:A)(s1:t): t :=
-  cons n s1.
-
-Definition pop (stack:t): t :=
-  match stack with
-  | [ ]  =>  [ ]
-  | _::stack' => stack'
-  end.
-
-End Stack.
-
 (** ** Syntax *)
 (* Translated from page 68 in text, where c is represented using lists*)
 Inductive inst: Type := 
@@ -38,23 +11,24 @@ Inductive inst: Type :=
 | TRUE   | FALSE 
 | EQ     | LE  
 | AND    | NEG
-| FETCH  : Z -> inst
-| STORE  : Z -> inst 
+| FETCH  : Id.t -> inst
+| STORE  : Id.t -> inst 
 | NOOP   : inst
 | BRANCH : list inst -> list inst -> inst
 | LOOP   : list inst -> list inst -> inst.
 
+Definition code: Type := list inst.
+
 (* Configuration has the form <c,e,s> where c is a sequence of inst, 
     e is the stack, and s is the storage*)
-Inductive configuration : Type :=
-| Rem : inst -> State.t Type-> configuration
-| Fin : State.t Type-> configuration.
+Definition config : Type := ( code * Stack.t * State.t) .
 
 (** ** Structural Operational Semantics *)
-Inductive am : inst -> State.t Type-> configuration -> Prop := 
-| am_noop:    (* < Skip, s > -> s *)
-    forall s, am NOOP s (Fin s)
-
+Inductive am : config -> config -> Prop := 
+| am_noop:
+    forall (c:code) (e:Stack.t)(s:State.t) ,
+      am  (c, e, s)  (c , e, s).
+(*
 | am_push: 
   forall  (n:Z) (s:State.t Type) (e:Stack.t), 
       am (PUSH n)  s  (Fin (Stack.push n e)).
@@ -116,4 +90,4 @@ Inductive am : inst -> State.t Type-> configuration -> Prop :=
 
 
 
-  End Examples.
+  End Examples. *)
