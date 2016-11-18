@@ -119,7 +119,7 @@ Module Examples.
       then 3%Z
     else 0%Z.
 
-   Example ex_4_1 : 
+   Example ex_4_1 :
       exists s', 
       (clos_refl_trans_1n _ am) ( (PUSH 1%Z)::(FETCH x)::(ADD)::(STORE x)::[],[ ], s ) 
                                              ([],[],s') /\ s' x = 4%Z.
@@ -130,12 +130,20 @@ Module Examples.
   Qed.
 
    Example ex_4_2: 
-      forall (s:State.t),
       exists s', 
-          (clos_refl_trans_1n  _ am) ( [ LOOP [TRUE] [NOOP] ], [ ], s) ([ ], [ ], s'). 
+          (clos_trans  _ am) ( [ LOOP [TRUE] [NOOP] ], [ ], s) ([ ], [ ], s'). 
       Proof. 
           repeat eexists.
           do 4 econstructor.
        Admitted.
+
+    Lemma ex_4_6: 
+      forall (c:code) (s:State.t) (e:Stack.t), 
+      exists c' s' e', 
+        am (c,e,s) (c',e',s').
+    Proof. 
+        repeat eexists.
+        induction clos_trans.
+    Qed.
 
 End Examples. 
