@@ -10,7 +10,7 @@
 
     Authors: Charles Chatwin and Chris Whitney*)
 
-Require Import Arith ZArith List String State Bool.
+Require Import Arith ZArith List String State Bool Relation_Operators.
 Import ListNotations.
 
 (** ** Syntax *)
@@ -39,7 +39,7 @@ Inductive am : config -> config -> Prop :=
 (*NOOP (skip)*)
 | am_noop:
     forall (c:code) (e:Stack.t)(s:State.t),
-      am  (c, e, s)  (c , e, s)
+      am  (NOOP::c, e, s)  (c , e, s)
 (*PUSH*)
 | am_push:
   forall  (n:Z) (c:code) (e:Stack.t)(s:State.t),
@@ -47,16 +47,16 @@ Inductive am : config -> config -> Prop :=
 
 (* Z operations *)
 | am_add:
-  forall (z1 z2: Z) (c:code) (s:State.t)  (e:Stack.t),
-     am (ADD::c, e, s) (c, (Stack.z (Z.add z1 z2))::e, s)
+  forall  (z1 z2:Z) (c:code) (s:State.t)  (e:Stack.t),
+     am (ADD::c, (Stack.z z1)::(Stack.z z2)::e, s) (c, (Stack.z (Z.add z1 z2))::e, s)
 
 | am_sub:
   forall (z1 z2: Z) (c:code) (s:State.t)  (e:Stack.t),
-     am (SUB::c, e, s) (c, (Stack.z (Z.sub z1 z2))::e, s)
+     am (SUB::c, (Stack.z z1)::(Stack.z z2)::e, s) (c, (Stack.z (Z.sub z1 z2))::e, s)
 
 | am_mult:
   forall (z1 z2: Z) (c:code) (s:State.t)  (e:Stack.t),
-     am (MULT::c, e, s) (c, (Stack.z (Z.mul z1 z2))::e, s)
+     am (MULT::c, (Stack.z z1)::(Stack.z z2)::e, s) (c, (Stack.z (Z.mul z1 z2))::e, s)
 
 (* TRUE and FALSE *)
 | am_true:
@@ -120,19 +120,22 @@ Module Examples.
     else 0%Z.
 
    Example ex_4_1 : 
-      exists s' , am ( (PUSH 1%Z)::(FETCH x)::(ADD)::(STORE x)::[],[ ], s ) ([],[],s').
+      exists s', 
+      (clos_refl_trans_1n _ am) ( (PUSH 1%Z)::(FETCH x)::(ADD)::(STORE x)::[],[ ], s ) 
+                                             ([],[],s') /\ s' x = 4%Z.
    Proof. 
-       eexists.
-       econstructor.
-          
-
-  Admitted.
+       repeat eexists.
+       do 10  econstructor.
+       simpl. reflexivity.
+  Qed.
 
    Example ex_4_2: 
       forall (s:State.t),
-      exists s', am ( [ LOOP [TRUE] [NOOP] ], [ ], s) ([ ], [ ], s'). 
-  Proof. 
-    admit. 
-  Admitted.
+      exists s', 
+          (clos_refl_trans_1n  _ am) ( [ LOOP [TRUE] [NOOP] ], [ ], s) ([ ], [ ], s'). 
+      Proof. 
+          repeat eexists.
+          do 4 econstructor.
+       Admitted.
 
 End Examples. 
