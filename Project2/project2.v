@@ -110,15 +110,20 @@ Module Examples.
       then 3%Z
     else 0%Z.
 
-  Definition s' (y: Id.t) : Z := 
+  (*Definition s' (y: Id.t) : Z := 
     if Id.beq y x 
       then 4%Z
-    else 0%Z.
+    else 0%Z.*)
 
-   Example ex_4_1: 
-      am ([ (PUSH 1%Z) ; (FETCH x) ; (ADD) ; (STORE x) ],[ ], s )  ([],[],s') . 
+   Example ex_4_1 : 
+      (*forall (s s':State.t), *) 
+      exists s', am ([ (PUSH 1%Z) ; (FETCH x) ; (ADD) ; (STORE x) ],[ ], s ) ([],[],s').
+
+(*forall (s':State.t), 
+      am ([ (PUSH 1%Z) ; (FETCH x) ; (ADD) ; (STORE x) ],[ ], s )
+    -> exist s', ([],[],s').*)
    Proof. 
-       admit.
+       econstructor.
    Admitted.
 
    Example ex_4_2: 
