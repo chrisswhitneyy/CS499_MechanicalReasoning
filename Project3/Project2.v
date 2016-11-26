@@ -10,7 +10,7 @@
 
     Authors: Charles Chatwin and Chris Whitney*)
 
-Require Import Arith ZArith List String State Bool Relation_Operators.
+Require Import Arith ZArith List String State_Stack Bool Relation_Operators.
 Import ListNotations.
 
 (** ** Syntax *)
