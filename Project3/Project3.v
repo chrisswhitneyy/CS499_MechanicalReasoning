@@ -2,10 +2,42 @@
 
 *) 
 
-Require Import Arith ZArith List String State_Stack Project2 Bool Relation_Operators.
+Require Import Arith ZArith List String Project2 Bool Relation_Operators.
 Import ListNotations.
 
-(*
-Inductive CB: (exp:Bexp) -> code : = 
-| cb_num : 
-  forall n:Z, CB (PUSH n). *)
+Fixpoint CA (e:Aexp.t): code := 
+  match e with 
+  | Aexp.Int n => [(PUSH n)]
+  | Aexp.Var x => [(FETCH x)]
+  | Aexp.Binop Aexp.Add a1 a2 => (CA a1) ++ (CA a2) ++ [ADD]
+  | Aexp.Binop Aexp.Mul a1 a2 => (CA a1) ++ (CA a2) ++ [MULT]
+  | Aexp.Binop Aexp.Sub a1 a2 => (CA a1) ++ (CA a2) ++ [SUB]
+  end.
+
+Fixpoint CB (e:Bexp.t): code := 
+  match e with 
+  | Bexp.Bool true => [TRUE]
+  | Bexp.Bool false => [FALSE]
+  | Bexp.Neg t => CB t ++ [NEG]
+  | Bexp.And t1 t2 => (CB t1) ++ (CB t2) ++ [AND]
+  | Bexp.Cmp Bexp.Equal t1 t2 => (CA t1) ++ (CA t2) ++ [EQ]
+  | Bexp.Cmp Bexp.LowerEq t1 t2 =>(CA t1) ++ (CA t2) ++ [LE]
+  end.
+
+Fixpoint CS (
+Module Examples. 
+  
+    Definition x : Id.t := Id.Id 0. 
+    Definition y : Id.t := Id.Id 1.
+    Definition z : Id.t := Id.Id 2.
+
+    Example ex_4_10 : 
+      CA (Aexp.Int 1%Z) ++ CA (Aexp.Var x) ++ [ADD] = [PUSH 1%Z] ++ [FETCH x] ++ [ADD]. 
+      Proof. 
+        compute. trivial.
+      Qed.
+
+    Example ex_4_12 :
+    
+
+End Examples.
