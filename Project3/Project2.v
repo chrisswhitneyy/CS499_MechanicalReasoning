@@ -378,3 +378,11 @@ Module Bexp.
   end.
 
 End Bexp.
+
+
+Inductive stm : Type :=
+| Skip : stm
+| Assign : Id.t -> Aexp.t -> stm
+| Seq : stm -> stm -> stm
+| If : Bexp.t -> stm -> stm -> stm
+| While: Bexp.t -> stm -> stm.

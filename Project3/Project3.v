@@ -24,7 +24,16 @@ Fixpoint CB (e:Bexp.t): code :=
   | Bexp.Cmp Bexp.LowerEq t1 t2 =>(CA t1) ++ (CA t2) ++ [LE]
   end.
 
-Fixpoint CS (
+Fixpoint CS (s:stm) : code := 
+  match s with 
+  | Assign x a => CA (a) ++ [STORE x]
+  | Skip => [NOOP]
+  | Seq s1 s2 => CS s1 ++ CS s2
+  | If b s1 s2 => CB b  ++ [BRANCH (CS s1) (CS s2)]
+  | While b s => [LOOP (CB b) (CS s)]
+  end.
+
+
 Module Examples. 
   
     Definition x : Id.t := Id.Id 0. 
@@ -38,6 +47,7 @@ Module Examples.
       Qed.
 
     Example ex_4_12 :
+      
     
 
 End Examples.
