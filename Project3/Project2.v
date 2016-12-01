@@ -379,7 +379,6 @@ Module Bexp.
 
 End Bexp.
 
-
 Inductive stm : Type :=
 | Skip : stm
 | Assign : Id.t -> Aexp.t -> stm

@@ -47,7 +47,15 @@ Module Examples.
       Qed.
 
     Example ex_4_12 :
-      
-    
+      CS (Seq 
+           (Assign y (Aexp.Int 1%Z))  
+           (While (Bexp.Neg (Bexp.Cmp Bexp.Equal (Aexp.Var x) (Aexp.Int 1%Z))) 
+                     (Seq (Assign y (Aexp.Binop Aexp.Mul (Aexp.Var x)  (Aexp.Var y))) 
+                             (Assign x (Aexp.Binop Aexp.Sub (Aexp.Var x) (Aexp.Int 1%Z)))))) = 
+           PUSH 1%Z :: STORE y :: [LOOP (PUSH 1%Z :: FETCH x :: EQ :: [NEG]) 
+                                                        (FETCH x :: FETCH y :: MULT :: STORE y :: PUSH 1%Z :: FETCH x :: SUB :: [STORE x]) ].
+    Proof.
+        compute. 
+    Qed.
 
 End Examples.
