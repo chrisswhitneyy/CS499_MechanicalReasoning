@@ -67,9 +67,19 @@ Module Examples.
       (clos_refl_trans_1n _ am) (CA a, [ ], s) ([ ], [Stack.z (Aexp.A a s)], s). 
   Proof.     
     intros. induction a. 
-    - simpl. compute. constructor.
+    - simpl. econstructor. apply am_push. constructor.
+    - simpl. econstructor. apply am_fetch. constructor.
+    - admit.
   Admitted.
 
+  Lemma _4_19: 
+     forall (b:Bexp.t) s, 
+      (clos_refl_trans_1n _ am) (CB b, [ ], s) ([ ], [Stack.T (Bexp.B b s)], s). 
+  Proof. 
+  intros. econstructor. 
+  - simpl. econstructor. admit.  admit.
+  - simpl. 
+  Admitted.
   
 
 End Examples.
