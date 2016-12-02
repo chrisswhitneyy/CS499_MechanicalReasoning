@@ -1,5 +1,9 @@
 (* Project 3: 
-
+  The purpose of this project is to implement transtion functions which take in a statement in the While lanauge
+  and out put an equavalent statement in the AM lanauage. This is accomplished by using the transtion tables in 
+  chapter 4 of the course text. The functions are then tested by using some examples. 
+  
+  Last Modified: Nov. 30th, 2016
 *) 
 
 Require Import Arith ZArith List String Project2 Bool Relation_Operators.
@@ -53,9 +57,19 @@ Module Examples.
                      (Seq (Assign y (Aexp.Binop Aexp.Mul (Aexp.Var x)  (Aexp.Var y))) 
                              (Assign x (Aexp.Binop Aexp.Sub (Aexp.Var x) (Aexp.Int 1%Z)))))) = 
            PUSH 1%Z :: STORE y :: [LOOP (PUSH 1%Z :: FETCH x :: EQ :: [NEG]) 
-                                                        (FETCH x :: FETCH y :: MULT :: STORE y :: PUSH 1%Z :: FETCH x :: SUB :: [STORE x]) ].
+                                                         (FETCH x :: FETCH y :: MULT :: STORE y :: PUSH 1%Z :: FETCH x :: SUB :: [STORE x]) ].
     Proof.
-        compute. 
-    Qed.
+        compute. admit.
+    Admitted.
+  
+  Lemma _4_18: 
+    forall a s, 
+      (clos_refl_trans_1n _ am) (CA a, [ ], s) ([ ], [Stack.z (Aexp.A a s)], s). 
+  Proof.     
+    intros. induction a. 
+    - simpl. compute. constructor.
+  Admitted.
+
+  
 
 End Examples.
