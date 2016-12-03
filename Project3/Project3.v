@@ -3,7 +3,8 @@
   and out put an equavalent statement in the AM lanauage. This is accomplished by using the transtion tables in 
   chapter 4 of the course text. The functions are then tested by using some examples. 
   
-  Last Modified: Nov. 30th, 2016
+  Author: Charles Chawtin and Christopher D. Whitney 
+  Last Modified: Dec. 2n, 2016
 *) 
 
 Require Import Arith ZArith List String Project2 Bool Relation_Operators.
@@ -13,9 +14,9 @@ Fixpoint CA (e:Aexp.t): code :=
   match e with 
   | Aexp.Int n => [(PUSH n)]
   | Aexp.Var x => [(FETCH x)]
-  | Aexp.Binop Aexp.Add a1 a2 => (CA a1) ++ (CA a2) ++ [ADD]
-  | Aexp.Binop Aexp.Mul a1 a2 => (CA a1) ++ (CA a2) ++ [MULT]
-  | Aexp.Binop Aexp.Sub a1 a2 => (CA a1) ++ (CA a2) ++ [SUB]
+  | Aexp.Binop Aexp.Add a1 a2 => (CA a2) ++ (CA a1) ++ [ADD]
+  | Aexp.Binop Aexp.Mul a1 a2 => (CA a2) ++ (CA a1) ++ [MULT]
+  | Aexp.Binop Aexp.Sub a1 a2 => (CA a2) ++ (CA a1) ++ [SUB]
   end.
 
 Fixpoint CB (e:Bexp.t): code := 
@@ -23,9 +24,9 @@ Fixpoint CB (e:Bexp.t): code :=
   | Bexp.Bool true => [TRUE]
   | Bexp.Bool false => [FALSE]
   | Bexp.Neg t => CB t ++ [NEG]
-  | Bexp.And t1 t2 => (CB t1) ++ (CB t2) ++ [AND]
-  | Bexp.Cmp Bexp.Equal t1 t2 => (CA t1) ++ (CA t2) ++ [EQ]
-  | Bexp.Cmp Bexp.LowerEq t1 t2 =>(CA t1) ++ (CA t2) ++ [LE]
+  | Bexp.And t1 t2 => (CB t2) ++ (CB t1) ++ [AND]
+  | Bexp.Cmp Bexp.Equal t1 t2 => (CA t2) ++ (CA t1) ++ [EQ]
+  | Bexp.Cmp Bexp.LowerEq t1 t2 =>(CA t2) ++ (CA t1) ++ [LE]
   end.
 
 Fixpoint CS (s:stm) : code := 
@@ -57,28 +58,32 @@ Module Examples.
                      (Seq (Assign y (Aexp.Binop Aexp.Mul (Aexp.Var x)  (Aexp.Var y))) 
                              (Assign x (Aexp.Binop Aexp.Sub (Aexp.Var x) (Aexp.Int 1%Z)))))) = 
            PUSH 1%Z :: STORE y :: [LOOP (PUSH 1%Z :: FETCH x :: EQ :: [NEG]) 
-                                                         (FETCH x :: FETCH y :: MULT :: STORE y :: PUSH 1%Z :: FETCH x :: SUB :: [STORE x]) ].
+                                                         (FETCH y :: FETCH x :: MULT :: STORE y :: PUSH 1%Z :: FETCH x :: SUB :: [STORE x]) ].
     Proof.
-        compute. admit.
-    Admitted.
+        compute. trivial.
+    Qed.
   
   Lemma _4_18: 
     forall a s, 
       (clos_refl_trans_1n _ am) (CA a, [ ], s) ([ ], [Stack.z (Aexp.A a s)], s). 
-  Proof.     
+  Proof. 
     intros. induction a. 
     - simpl. econstructor. apply am_push. constructor.
     - simpl. econstructor. apply am_fetch. constructor.
-    - admit.
+    - simpl. destruct b.
+       +  repeat econstructor. admit. 
+       + admit.
+       + admit.
   Admitted.
 
   Lemma _4_19: 
      forall (b:Bexp.t) s, 
       (clos_refl_trans_1n _ am) (CB b, [ ], s) ([ ], [Stack.T (Bexp.B b s)], s). 
   Proof. 
-  intros. econstructor. 
-  - simpl. econstructor. admit.  admit.
+  intros. induction b.
   - simpl. 
+     + destruct b;  repeat econstructor.
+  - admit.
   Admitted.
   
 

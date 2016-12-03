@@ -197,7 +197,6 @@ Module Examples.
       Proof.
           do 5 (econstructor; simpl).
       Qed.
-
     Lemma ex_4_6: 
       forall (c:code) (s:State.t) (e:Stack.t), 
       exists c' s' e', 
