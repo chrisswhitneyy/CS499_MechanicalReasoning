@@ -71,9 +71,8 @@ Module Examples.
     - simpl. econstructor. apply am_push. constructor.
     - simpl. econstructor. apply am_fetch. constructor.
     - simpl. destruct b.
-       +  repeat econstructor. apply am_add. 
-       +  econstructor. 
-       + admit.
+       +  repeat econstructor. admit.
+       +  econstructor.  admit.
   Admitted.
 
   Lemma _4_19: 
@@ -86,5 +85,20 @@ Module Examples.
   - admit.
   Admitted.
   
+  Lemma _4_21:
+    forall S s s', 
+      if S s -> s' then (close_refl_trans _ am) (CS s, e, s) (e, e, s').
+  Lemma _4_22:
+    forall S s s', 
+      if (clos_refl_trans_1n _ am) (CS S, stack, s) (stack, e, s') then 
+          S s -> s' /\ stack = e.
 
+S
 End Examples.
+
+
+
+
+
+
+
