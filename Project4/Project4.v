@@ -60,7 +60,7 @@ Module Examples.
         compute. trivial.
     Qed.
   
-  Lemma _4_18: 
+  Lemma lemma_4_18: 
     forall a s, 
       (clos_refl_trans_1n _ am) (CA a, [ ], s) ([ ], [Stack.z (Aexp.A a s)], s). 
   Proof.
@@ -72,7 +72,7 @@ Module Examples.
        +  econstructor.  admit.
   Admitted.
 
-  Lemma _4_19: 
+  Lemma lemma_4_19: 
      forall (b:Bexp.t) s, 
       (clos_refl_trans_1n _ am) (CB b, [ ], s) ([ ], [Stack.T (Bexp.B b s)], s). 
   Proof. 
@@ -87,7 +87,15 @@ Module Examples.
     forall (S:stm) (s:State.t) (s':State.t), 
       (ns S s s') -> (clos_refl_trans_1n _ am) (CS S, [ ], s) ([ ],[ ], s').
   Proof.
-    admit.
+    intros S s s' NS.
+    induction NS.
+    - repeat econstructor.
+    -  simpl.
+        set (State.update s x0 (Aexp.A a s)) as s'.
+        assert (ns (Assign x0 a) s s'). { constructor. }
+        admit. (* eapply lemma_4_18. *)
+    - admit.
+    - admit.
   Admitted.
 
   Lemma _4_22:
@@ -95,6 +103,7 @@ Module Examples.
       (clos_refl_trans_1n _ am) (CS S, e, s) ([ ], [ ], s') -> 
           (ns S s s') /\ e = [ ].
    Proof.
+     intros S s s' e.
      admit.
    Admitted.
 
