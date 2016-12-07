@@ -1,13 +1,10 @@
-(* Project 3: 
-  The purpose of this project is to implement transtion functions which take in a statement in the While lanauge
-  and out put an equavalent statement in the AM lanauage. This is accomplished by using the transtion tables in 
-  chapter 4 of the course text. The functions are then tested by using some examples. 
-  
+(* Project 4: 
+
   Author: Charles Chawtin and Christopher D. Whitney 
-  Last Modified: Dec. 2n, 2016
+  Last Modified: Dec. 6th, 2016
 *) 
 
-Require Import Arith ZArith List String Project2 Bool Relation_Operators.
+Require Import Arith ZArith List String WhileAndAm WhileAndAm Bool Relation_Operators.
 Import ListNotations.
 
 Fixpoint CA (e:Aexp.t): code := 
@@ -66,7 +63,7 @@ Module Examples.
   Lemma _4_18: 
     forall a s, 
       (clos_refl_trans_1n _ am) (CA a, [ ], s) ([ ], [Stack.z (Aexp.A a s)], s). 
-  Proof. 
+  Proof.
     intros. induction a. 
     - simpl. econstructor. apply am_push. constructor.
     - simpl. econstructor. apply am_fetch. constructor.
@@ -84,16 +81,23 @@ Module Examples.
      + destruct b;  repeat econstructor.
   - admit.
   Admitted.
-  
-  Lemma _4_21:
-    forall S s s', 
-      if S s -> s' then (close_refl_trans _ am) (CS s, e, s) (e, e, s').
-  Lemma _4_22:
-    forall S s s', 
-      if (clos_refl_trans_1n _ am) (CS S, stack, s) (stack, e, s') then 
-          S s -> s' /\ stack = e.
 
-S
+
+  Lemma _4_21:
+    forall (S:stm) (s:State.t) (s':State.t), 
+      (ns S s s') -> (clos_refl_trans_1n _ am) (CS S, [ ], s) ([ ],[ ], s').
+  Proof.
+    admit.
+  Admitted.
+
+  Lemma _4_22:
+    forall S s s' (e:Stack.t), 
+      (clos_refl_trans_1n _ am) (CS S, e, s) ([ ], [ ], s') -> 
+          (ns S s s') /\ e = [ ].
+   Proof.
+     admit.
+   Admitted.
+
 End Examples.
 
 
