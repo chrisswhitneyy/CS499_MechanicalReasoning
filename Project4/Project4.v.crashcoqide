@@ -93,22 +93,17 @@ Module Examples.
     -  simpl.
          assert ((clos_refl_trans_1n _ am) (CA a,[ ], s) ([ ], [Stack.z (Aexp.A a s)], s)). { 
             apply lemma_4_18. }
-         assert((clos_refl_trans_1n _ am) 
-                    (CA a ++ [STORE x0], [ ], s) 
-                    ([STORE x0], [Stack.z (Aexp.A a s)],s)). {
-          repeat econstructor.
-        } admit.
-    - repeat econstructor. admit.
+        apply Examples.exercise_4_4.
+    - admit.
     - admit.
   Admitted.
 
   Lemma _4_22:
-    forall S s s' (e:Stack.t) , 
-      (clos_refl_trans _ am) (CS S, e, s) ([ ], [ ], s') -> 
+    forall S s s' (e:Stack.t), 
+      (clos_refl_trans_1n _ am) (CS S, e, s) ([ ], [ ], s') -> 
           (ns S s s') /\ e = [ ].
    Proof.
      intros S s s' e.
-     
      admit.
    Admitted.
 
