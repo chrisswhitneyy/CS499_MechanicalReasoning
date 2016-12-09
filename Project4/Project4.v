@@ -1,10 +1,10 @@
 (* Project 4: 
 
   Author: Charles Chawtin and Christopher D. Whitney 
-  Last Modified: Dec. 6th, 2016
+  Last Modified: Dec. 9th, 2016
 *) 
 
-Require Import Arith ZArith List String WhileAndAm WhileAndAm Bool Relation_Operators.
+Require Import Arith ZArith List String WhileAndAm Bool Relation_Operators.
 Import ListNotations.
 
 Fixpoint CA (e:Aexp.t): code := 
@@ -68,8 +68,8 @@ Module Examples.
     - simpl. econstructor. apply am_push. constructor.
     - simpl. econstructor. apply am_fetch. constructor.
     - simpl. destruct b.
-       +  repeat econstructor. admit.
-       +  econstructor.  admit.
+       + repeat econstructor. simpl. (*rewrite am_add.*) admit.
+       +  econstructor. (*apply am_mult.*)  admit.
   Admitted.
 
   Lemma lemma_4_19: 
@@ -77,7 +77,7 @@ Module Examples.
       (clos_refl_trans_1n _ am) (CB b, [ ], s) ([ ], [Stack.T (Bexp.B b s)], s). 
   Proof. 
   intros. induction b.
-  - simpl. 
+  - simpl.
      + destruct b;  repeat econstructor.
   - admit.
   Admitted.
@@ -96,23 +96,141 @@ Module Examples.
          assert((clos_refl_trans_1n _ am) 
                     (CA a ++ [STORE x0], [ ], s) 
                     ([STORE x0], [Stack.z (Aexp.A a s)],s)). {
-          repeat econstructor.
-        } admit.
-    - repeat econstructor. admit.
-    - admit.
-  Admitted.
+
+          (*SearchAbout clos_refl_trans_1n.*)
+    apply Examples.ex_4_4' with (c2 := [STORE x0]) (e2 := []) in H. simpl in H. apply H.
+        }
+  
+    apply Operators_Properties.clos_rt1n_rt in H0.
+     (*??*)
+    assert (Examples.am_star ([STORE x0], [Stack.z (Aexp.A a s)], s) ([], [], State.update s x0 (Aexp.A a s))).
+    repeat econstructor. (*??*)
+
+    apply Operators_Properties.clos_rt1n_rt in H1.
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption. assumption.
+
+    - simpl.
+    apply Examples.ex_4_4' with (c2 := (CS S2)) (e2:= []) in IHNS1. simpl in IHNS1.
+    apply Operators_Properties.clos_rt1n_rt in IHNS1.
+    apply Operators_Properties.clos_rt1n_rt in IHNS2.
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption. assumption.
+    - simpl.
+    set (HS := lemma_4_19 b s).
+    apply Examples.ex_4_4' with (c2 := [BRANCH (CS S1) (CS S2)]) (e2:=[]) in HS.
+
+    assert (Examples.am_star ([BRANCH (CS S1) (CS S2)], [Stack.T (Bexp.B b s)], s) (CS S1++[], [], s)).
+    rewrite H.
+    repeat econstructor. 
+    simpl in *.
+    rewrite app_nil_r in H0.
+    
+    apply Operators_Properties.clos_rt1n_rt in HS.
+    apply Operators_Properties.clos_rt1n_rt in H0.
+    apply Operators_Properties.clos_rt1n_rt in IHNS.
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption.
+    eapply rt_trans. eassumption. assumption.
+    - simpl.
+    set (HS := lemma_4_19 b s).
+    apply Examples.ex_4_4' with (c2 := [BRANCH (CS S1) (CS S2)]) (e2:=[]) in HS.
+
+    assert (Examples.am_star ([BRANCH (CS S1) (CS S2)], [Stack.T (Bexp.B b s)], s) (CS S2++[], [], s)).
+    rewrite H.
+    repeat econstructor. 
+    simpl in *.
+    rewrite app_nil_r in H0.
+    
+    apply Operators_Properties.clos_rt1n_rt in HS.
+    apply Operators_Properties.clos_rt1n_rt in H0.
+    apply Operators_Properties.clos_rt1n_rt in IHNS.
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption.
+    eapply rt_trans. eassumption. assumption.
+    
+    - simpl in *.
+    assert (Examples.am_star ([LOOP (CB b) (CS S)], [], s) ([LOOP (CB b) (CS S)], [], s')).
+    {
+    econstructor. econstructor.
+    set (HS := lemma_4_19 b s).
+    apply Examples.ex_4_4' with (c2 := [BRANCH (CS S ++ [LOOP (CB b) (CS S)]) [NOOP]]) (e2:=[]) in HS.
+    assert (Examples.am_star ([BRANCH (CS S ++ [LOOP (CB b) (CS S)]) [NOOP]], [Stack.T (Bexp.B b s)], s) (CS S++[LOOP (CB b) (CS S)], [], s)).
+    rewrite H.
+    simpl in *.
+    econstructor. constructor.
+    rewrite app_nil_r.
+    constructor.
+    simpl in *.
+    
+    apply Operators_Properties.clos_rt1n_rt in HS.
+    apply Operators_Properties.clos_rt1n_rt in H0.
+    apply Operators_Properties.clos_rt1n_rt in IHNS2.
+    apply Examples.ex_4_4' with (c2:=[LOOP (CB b) (CS S)]) (e2:=[]) in IHNS1.
+    simpl in IHNS1.
+    apply Operators_Properties.clos_rt1n_rt in IHNS1.
+
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption.
+    eapply rt_trans. eassumption. assumption.
+    }
+
+    apply Operators_Properties.clos_rt1n_rt in H0.
+    apply Operators_Properties.clos_rt1n_rt in IHNS2.
+    
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans. eassumption. assumption.
+   
+   - simpl.
+  
+    apply Operators_Properties.clos_rt_rt1n.
+    eapply rt_trans.
+    repeat econstructor.
+    eapply rt_trans.
+    set (HS := lemma_4_19 b s).
+    apply Examples.ex_4_4' with (c2:=[BRANCH (CS S ++ [LOOP (CB b) (CS S)]) [NOOP]]) (e2:=[]) in HS.
+    simpl in *.
+    apply Operators_Properties.clos_rt1n_rt in HS.
+    eassumption.
+
+    rewrite H.
+    eapply rt_trans.
+    set (HH := am_branch_ff ([]) (CS S ++ [LOOP (CB b) (CS S)]) ([NOOP]) s []).
+    simpl in HH. 
+    repeat econstructor.
+    repeat econstructor.
+  Qed.
+
+   Lemma ca:
+    forall a, exists i c, CA a = i::c.
+    
+   Admitted.
+
+  Lemma cS:
+    forall S, exists i c, CS S = i::c.
+    
+   Admitted.
+
+    Lemma amS:
+    forall S e s s',
+      am (CS S, e, s) ([],[],s') ->
+        S = Skip /\ e = [] /\ s = s'.
+    Admitted.
+
+
 
   Lemma _4_22:
-    forall S s s' (e:Stack.t) , 
-      (clos_refl_trans _ am) (CS S, e, s) ([ ], [ ], s') -> 
+    forall k S s s' (e:Stack.t) , 
+      (Examples.am_k k) (CS S, e, s) ([ ], [ ], s') -> 
           (ns S s s') /\ e = [ ].
-   Proof.
-     intros S s s' e.
-     
-     admit.
+   Proof. 
+     intros k S s s' e H.
+     induction k.
+     -  apply Empty_set_ind. 
    Admitted.
 
 End Examples.
+
 
 
 
