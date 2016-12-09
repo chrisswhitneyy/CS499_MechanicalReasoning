@@ -224,9 +224,14 @@ Module Examples.
       (Examples.am_k k) (CS S, e, s) ([ ], [ ], s') -> 
           (ns S s s') /\ e = [ ].
    Proof. 
-     intros k S s s' e H.
+     intros k S s s' e.
      induction k.
-     -  apply Empty_set_ind. 
+     -  apply Empty_set_ind. admit.
+     - destruct S. 
+        + admit.
+        + admit.
+        + admit.
+        + admit.
    Admitted.
 
 End Examples.
