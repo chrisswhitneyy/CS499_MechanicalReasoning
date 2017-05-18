@@ -598,8 +598,9 @@ Module Examples.
       forall k c1 e1 s c' e' s' c2 e2,
         am_k k (c1, e1, s) (c', e', s') ->
         am_k k (c1++c2, e1++e2, s) (c'++c2, e'++e2, s').
-    Proof. 
-    Admitted.
+    Proof.
+      induction e2.
+    
     Notation am_star := (clos_refl_trans_1n  _ am).
 
   Lemma ex_4_4':

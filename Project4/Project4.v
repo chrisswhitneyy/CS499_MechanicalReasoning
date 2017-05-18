@@ -1,14 +1,13 @@
-(* Project 4: 
+(* Project 4:
 
-  Author: Charles Chawtin and Christopher D. Whitney 
+  Author: Charles Chawtin and Christopher D. Whitney
   Last Modified: Dec. 9th, 2016
 *) 
+Require Import Arith ZArith List String Bool Relation_Operators.
+Import ListNotations WhileAm.
 
-Require Import Arith ZArith List String WhileAndAm Bool Relation_Operators.
-Import ListNotations.
-
-Fixpoint CA (e:Aexp.t): code := 
-  match e with 
+Fixpoint CA (e:Aexp.t): code :=
+  match e with
   | Aexp.Int n => [(PUSH n)]
   | Aexp.Var x => [(FETCH x)]
   | Aexp.Binop Aexp.Add a1 a2 => (CA a2) ++ (CA a1) ++ [ADD]
@@ -35,13 +34,11 @@ Fixpoint CS (s:stm) : code :=
   | While b s => [LOOP (CB b) (CS s)]
   end.
 
-
 Module Examples. 
-  
     Definition x : Id.t := Id.Id 0. 
     Definition y : Id.t := Id.Id 1.
     Definition z : Id.t := Id.Id 2.
-    
+   
     Example ex_4_10 : 
       CA (Aexp.Int 1%Z) ++ CA (Aexp.Var x) ++ [ADD] = [PUSH 1%Z] ++ [FETCH x] ++ [ADD]. 
       Proof. 
@@ -68,8 +65,8 @@ Module Examples.
     - simpl. econstructor. apply am_push. constructor.
     - simpl. econstructor. apply am_fetch. constructor.
     - simpl. destruct b.
-       + repeat econstructor. simpl. (*rewrite am_add.*) admit.
-       +  econstructor. (*apply am_mult.*)  admit.
+       + repeat econstructor. simpl. (*rewrite am_add.*) 
+       +  econstructor. (*apply am_mult.*) 
   Admitted.
 
   Lemma lemma_4_19: 
@@ -109,7 +106,6 @@ Module Examples.
     apply Operators_Properties.clos_rt1n_rt in H1.
     apply Operators_Properties.clos_rt_rt1n.
     eapply rt_trans. eassumption. assumption.
-
     - simpl.
     apply Examples.ex_4_4' with (c2 := (CS S2)) (e2:= []) in IHNS1. simpl in IHNS1.
     apply Operators_Properties.clos_rt1n_rt in IHNS1.
@@ -200,10 +196,10 @@ Module Examples.
     repeat econstructor.
     repeat econstructor.
   Qed.
-
+  
    Lemma ca:
     forall a, exists i c, CA a = i::c.
-    
+   
    Admitted.
 
   Lemma cS:
@@ -233,13 +229,4 @@ Module Examples.
         + admit.
         + admit.
    Admitted.
-
 End Examples.
-
-
-
-
-
-
-
-
